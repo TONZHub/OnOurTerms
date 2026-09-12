@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1789206789840,
+      "tag": "0000_chief_the_hunter",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+{"name":"on-our-terms","private":true,"type":"module","scripts":{"build":"node scripts/build.mjs","build:render":"node scripts/render-static.mjs","dev":"node scripts/dev.mjs","test":"node --test tests/*.test.mjs","db:generate":"drizzle-kit generate"},"devDependencies":{"drizzle-kit":"0.31.4","drizzle-orm":"0.44.5"}}
+
