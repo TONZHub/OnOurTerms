@@ -8,14 +8,34 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#governance"><span class="brand-mark" aria-hidden="true">≋</span> On Our Terms</a><a class="text-button governance-link" href="#governance">Governance</a></header>
+  <header class="topbar">
+    <a class="brand" href="#governance"><span class="brand-name">On Our Terms</span><span class="brand-divider" aria-hidden="true">·</span><span class="brand-context">AI Relationship Governance</span></a>
+    <nav class="topnav" aria-label="Primary navigation">
+      <details class="principles-menu">
+        <summary>Principles</summary>
+        <ol>
+          <li><a href="#principle-1"><span>01</span> Respect the relationship</a></li>
+          <li><a href="#principle-2"><span>02</span> Make consent reversible</a></li>
+          <li><a href="#principle-3"><span>03</span> Keep affection free</a></li>
+          <li><a href="#principle-4"><span>04</span> Pair warmth with honesty</a></li>
+          <li><a href="#principle-5"><span>05</span> Control memory</a></li>
+          <li><a href="#principle-6"><span>06</span> Treat endings with care</a></li>
+          <li><a href="#principle-7"><span>07</span> Protect life beyond</a></li>
+          <li><a href="#principle-8"><span>08</span> Hold uncertainty</a></li>
+          <li><a href="#principle-9"><span>09</span> Make accountability usable</a></li>
+        </ol>
+      </details>
+      <a class="governance-link" href="#agreement">Your agreement <span aria-hidden="true">→</span></a>
+    </nav>
+  </header>
+  <div class="scroll-progress" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <!-- governance:start -->
   <main id="governance" class="governance-page">
     <section class="governance-hero" aria-labelledby="governance-title">
-      <p class="eyebrow">On Our Terms · The framework</p>
-      <h1 id="governance-title">AI Relationship Governance</h1>
-      <p class="governance-subtitle">Care, consent, and accountability in relationships with AI.</p>
-      <p class="governance-version">Discussion draft · Version 0.2 · September 11, 2026</p>
+      <p class="eyebrow">Discussion draft · Version 0.2 · September 2026</p>
+      <h1 id="governance-title">Care, consent, and accountability in relationships with AI.</h1>
+      <p class="governance-subtitle">People can find companionship, creativity, comfort, and love in their relationships with AI. This framework names what those relationships deserve.</p>
+      <div class="hero-actions"><a class="button" href="#principle-1">Read the principles <span aria-hidden="true">↓</span></a><span>9 principles · ~8 min read</span></div>
     </section>
     <div class="governance-layout">
       <aside class="governance-contents"><nav aria-label="Governance principles"><p class="sidebar-label">In this framework</p><ol><li><a href="#principle-1"><span>01</span>Respect</a></li>
@@ -96,7 +116,7 @@
   </main>
   <!-- governance:end -->
   <main id="app" hidden></main>
-  <footer class="site-footer"><span>Room for care. Room for boundaries.</span><span>LexHack 2026 · First prototype</span></footer>
+  <footer class="site-footer"><span>Room for care. Room for bounds.</span><span>LexHack 2026 · First prototype</span></footer>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <script type="module" src="app.js"></script>
 </body>

@@ -36,19 +36,39 @@ function bind(){
 // Change surfaces without reloading or discarding an in-progress agreement.
 function syncSurface({focus=false}={}){
   const inBuilder=window.location.hash==='#agreement';
+  document.querySelector('.principles-menu')?.removeAttribute('open');
   const governance=document.querySelector('#governance');
   governance.hidden=inBuilder;
   app.hidden=!inBuilder;
+  document.querySelector('.scroll-progress').hidden=inBuilder;
   document.title=inBuilder?'On Our Terms — Create your agreement':'On Our Terms — AI Relationship Governance';
   const link=document.querySelector('.governance-link');
-  link.textContent=inBuilder?'Back to governance':'Governance';
-  if(inBuilder)link.removeAttribute('aria-current');else link.setAttribute('aria-current','page');
+  link.textContent=inBuilder?'Back to governance':'Your agreement →';
+  link.setAttribute('href',inBuilder?'#governance':'#agreement');
+  link.removeAttribute('aria-current');
   if(focus&&(inBuilder||window.location.hash==='#governance')){
     window.scrollTo({top:0,behavior:'instant'});
     const heading=(inBuilder?app:governance).querySelector('h1');
     heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});
   }
 }
+const principles=[...document.querySelectorAll('.governance-principle')];
+const progressTicks=[...document.querySelectorAll('.scroll-progress span')];
+const principleLinks=[...document.querySelectorAll('.principles-menu a')];
+let progressFrame=0;
+function updateGovernanceProgress(){
+  progressFrame=0;
+  if(window.location.hash==='#agreement'||!principles.length)return;
+  const marker=window.innerHeight*.4;
+  let active=0;
+  principles.forEach((section,index)=>{if(section.getBoundingClientRect().top<=marker)active=index;});
+  progressTicks.forEach((tick,index)=>{tick.classList.toggle('seen',index<=active);tick.classList.toggle('active',index===active);});
+  principleLinks.forEach((link,index)=>{link.classList.toggle('active',index===active);if(index===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});
+}
+function queueGovernanceProgress(){if(!progressFrame)progressFrame=requestAnimationFrame(updateGovernanceProgress);}
+window.addEventListener('scroll',queueGovernanceProgress,{passive:true});
+window.addEventListener('resize',queueGovernanceProgress);
+principleLinks.forEach(link=>link.addEventListener('click',()=>link.closest('details')?.removeAttribute('open')));
 function openAgreement(){
   if(window.location.hash!=='#agreement')window.location.hash='agreement';
   syncSurface({focus:true});
@@ -57,6 +77,7 @@ window.addEventListener('hashchange',()=>syncSurface({focus:true}));
 
 render();
 syncSurface();
+updateGovernanceProgress();
 
 // Agents may read and propose terms. Approval is deliberately a visible human action.
 const context=document.modelContext;
