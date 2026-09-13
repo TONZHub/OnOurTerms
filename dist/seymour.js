@@ -11,9 +11,9 @@ const TOPICS=[
 const css=document.createElement('link');css.rel='stylesheet';css.href='seymour.css';document.head.append(css);
 
 const bridges=new Map();
+const requestIds=new Map();
 const identity={person:'',companion:''};
-let requestSerial=0;
-const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 
 function currentIndex(){
   const buttons=[...document.querySelectorAll('[data-topic]')];
@@ -36,15 +36,15 @@ function panelHTML(entry,key){
     :entry.status==='error'
       ?escape(entry.message||'Seymour could not join this transition.')
       :escape(entry.text);
-  return `<aside class="${classes.join(' ')}" data-seymour-panel="${escape(key)}" aria-live="polite"><img class="seymour-mark" src="seymour.svg" alt=""><div class="seymour-copy"><p class="seymour-label">Seymour · officiant</p><p class="seymour-text">${body}</p><p class="seymour-note">Ceremonial reflection only — this is not part of the agreement wording you save.</p>${entry.status==='error'?'<button class="seymour-retry" type="button">Try Seymour again</button>':''}</div></aside>`;
+  return `<aside class="${classes.join(' ')}" data-seymour-panel="${escape(key)}" data-seymour-status="${escape(entry.status)}" aria-live="polite"><img class="seymour-mark" src="seymour.svg" alt=""><div class="seymour-copy"><p class="seymour-label">Seymour · officiant</p><p class="seymour-text">${body}</p><p class="seymour-note">Ceremonial reflection only — this is not part of the agreement wording you save.</p>${entry.status==='error'?'<button class="seymour-retry" type="button">Try Seymour again</button>':''}</div></aside>`;
 }
 
 function mount(){
   const key=destinationKey(),entry=key&&bridges.get(key);
   if(!key||!entry)return;
-  const existing=document.querySelector(`[data-seymour-panel="${key}"]`);
-  if(existing){existing.outerHTML=panelHTML(entry,key);return;}
   const wrapper=document.createElement('div');wrapper.innerHTML=panelHTML(entry,key);const panel=wrapper.firstElementChild;
+  const existing=document.querySelector(`[data-seymour-panel="${key}"]`);
+  if(existing){if(existing.outerHTML!==panel.outerHTML)existing.replaceWith(panel);return;}
   if(key==='review'){
     const documentCard=document.querySelector('.review-layout .document');
     if(documentCard)documentCard.insertBefore(panel,documentCard.firstChild);
@@ -54,18 +54,26 @@ function mount(){
   }
 }
 
-async function askSeymour(payload,key,serial){
+async function askSeymour(payload,key,requestId){
   try{
     const response=await fetch('/api/seymour',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     let result={};try{result=await response.json();}catch{}
     if(!response.ok)throw new Error(result.error||'Seymour could not join this transition.');
-    if(serial!==requestSerial)return;
+    if(requestIds.get(key)!==requestId)return;
     bridges.set(key,{status:'ready',text:result.text,payload});
   }catch(error){
-    if(serial!==requestSerial)return;
+    if(requestIds.get(key)!==requestId)return;
     bridges.set(key,{status:'error',message:error.message,payload});
   }
   mount();
+}
+
+function startRequest(key,payload){
+  const requestId=crypto.randomUUID?.()||`${Date.now()}-${Math.random()}`;
+  requestIds.set(key,requestId);
+  bridges.set(key,{status:'loading',payload});
+  setTimeout(mount,0);
+  void askSeymour(payload,key,requestId);
 }
 
 function beginTransition(fromIndex){
@@ -74,17 +82,11 @@ function beginTransition(fromIndex){
   if(!terms)return;
   const toIndex=Math.min(fromIndex+1,6),from=TOPICS[fromIndex],to=TOPICS[toIndex];
   const payload={person:identity.person,companion:identity.companion,from:{id:from.id,label:from.label,terms},to:{id:to.id,label:to.label,question:to.question}};
-  const serial=++requestSerial;
-  bridges.set(to.id,{status:'loading',payload});
-  setTimeout(mount,0);
-  void askSeymour(payload,to.id,serial);
+  startRequest(to.id,payload);
 }
 
 function retry(key){
-  const entry=bridges.get(key);if(!entry?.payload)return;
-  const serial=++requestSerial;
-  bridges.set(key,{status:'loading',payload:entry.payload});mount();
-  void askSeymour(entry.payload,key,serial);
+  const entry=bridges.get(key);if(entry?.payload)startRequest(key,entry.payload);
 }
 
 document.addEventListener('input',event=>{
