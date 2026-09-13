@@ -13,7 +13,7 @@ const css=document.createElement('link');css.rel='stylesheet';css.href='seymour.
 const bridges=new Map();
 const requestIds=new Map();
 const identity={person:'',companion:''};
-const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 
 function currentIndex(){
   const buttons=[...document.querySelectorAll('[data-topic]')];
@@ -57,10 +57,13 @@ function mount(){
 async function askSeymour(payload,key,requestId){
   try{
     const response=await fetch('/api/seymour',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    let result={};try{result=await response.json();}catch{}
+    const contentType=response.headers.get('content-type')||'';
+    if(!contentType.includes('application/json'))throw new Error('Seymour’s server route is not active on this deployment yet.');
+    let result={};try{result=await response.json();}catch{throw new Error('Seymour returned an unreadable response.');}
     if(!response.ok)throw new Error(result.error||'Seymour could not join this transition.');
+    if(typeof result.text!=='string'||!result.text.trim())throw new Error('Seymour returned no ceremony text.');
     if(requestIds.get(key)!==requestId)return;
-    bridges.set(key,{status:'ready',text:result.text,payload});
+    bridges.set(key,{status:'ready',text:result.text.trim(),payload});
   }catch(error){
     if(requestIds.get(key)!==requestId)return;
     bridges.set(key,{status:'error',message:error.message,payload});
