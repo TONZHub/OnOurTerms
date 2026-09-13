@@ -1,22 +1,11 @@
 services:
   - type: web
     name: on-our-terms
-    runtime: static
+    runtime: node
     buildCommand: node scripts/render-static.mjs
-    staticPublishPath: ./dist
+    startCommand: node server/render-server.mjs
     autoDeployTrigger: commit
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: Referrer-Policy
-        value: no-referrer
-    routes:
-      - type: rewrite
-        source: /api/config
-        destination: /api/config.json
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
+    healthCheckPath: /
+    envVars:
+      - key: HF_SEYMOUR_TOKEN
+        sync: false
