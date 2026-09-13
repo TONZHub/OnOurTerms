@@ -13,7 +13,7 @@ const css=document.createElement('link');css.rel='stylesheet';css.href='seymour.
 const bridges=new Map();
 const requestIds=new Map();
 const identity={person:'',companion:''};
-const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function currentIndex(){
   const buttons=[...document.querySelectorAll('[data-topic]')];
