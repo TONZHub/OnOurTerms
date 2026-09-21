@@ -2,7 +2,7 @@ services:
   - type: web
     name: on-our-terms
     runtime: node
-    buildCommand: node scripts/render-static.mjs
+    buildCommand: python3 scripts/render-governance.py && node scripts/render-static.mjs
     startCommand: node server/render-server.mjs
     autoDeployTrigger: commit
     healthCheckPath: /
