@@ -33,51 +33,47 @@ function bind(){
   document.querySelector('#copy')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(toMarkdown(state));document.querySelector('#copy-status').textContent='Copied. Your exact wording is ready to paste.';}catch{document.querySelector('#copy-status').textContent='Copy is unavailable here. Use Download Markdown instead.';}});
 }
 
-// Change surfaces without reloading or discarding an in-progress agreement.
+// Change public documents without reloading or discarding an in-progress agreement.
+function route(){
+  const hash=window.location.hash.slice(1);
+  if(hash==='agreement')return 'agreement';
+  if(hash.startsWith('framework'))return 'framework';
+  if(hash==='standard')return 'standard';
+  if(hash==='conformance')return 'conformance';
+  if(hash==='changelog')return 'changelog';
+  return 'home';
+}
 function syncSurface({focus=false}={}){
-  const inBuilder=window.location.hash==='#agreement';
-  document.querySelector('.principles-menu')?.removeAttribute('open');
-  const governance=document.querySelector('#governance');
-  governance.hidden=inBuilder;
+  const current=route(),inBuilder=current==='agreement';
+  document.querySelectorAll('[data-surface]').forEach(surface=>surface.hidden=surface.dataset.surface!==current);
   app.hidden=!inBuilder;
-  document.querySelector('.scroll-progress').hidden=inBuilder;
-  document.title=inBuilder?'On Our Terms — Create your agreement':'On Our Terms — AI Relationship Governance';
-  const link=document.querySelector('.governance-link');
-  link.textContent=inBuilder?'Back to governance':'Your agreement →';
-  link.setAttribute('href',inBuilder?'#governance':'#agreement');
-  link.removeAttribute('aria-current');
-  if(focus&&(inBuilder||window.location.hash==='#governance')){
+  const titles={home:'On Our Terms — Relational AI Governance',framework:'Framework v0.4 — On Our Terms',standard:'Governance Standard — On Our Terms',conformance:'Conformance Profile — On Our Terms',changelog:'Changelog — On Our Terms',agreement:'Create your agreement — On Our Terms'};
+  document.title=titles[current];
+  document.querySelectorAll('.site-nav a').forEach(link=>{
+    const target=link.getAttribute('href').slice(1);
+    if(target===current)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');
+  });
+  document.querySelector('#site-nav')?.classList.remove('open');
+  document.querySelector('.nav-toggle')?.setAttribute('aria-expanded','false');
+  if(focus&&!window.location.hash.match(/^#framework-[1-9]$/)){
     window.scrollTo({top:0,behavior:'instant'});
-    const heading=(inBuilder?app:governance).querySelector('h1');
-    heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});
+    const surface=inBuilder?app:document.querySelector('[data-surface="'+current+'"]');
+    const heading=surface?.querySelector('h1');
+    heading?.setAttribute('tabindex','-1');heading?.focus({preventScroll:true});
   }
 }
-const principles=[...document.querySelectorAll('.governance-principle')];
-const progressTicks=[...document.querySelectorAll('.scroll-progress span')];
-const principleLinks=[...document.querySelectorAll('.principles-menu a')];
-let progressFrame=0;
-function updateGovernanceProgress(){
-  progressFrame=0;
-  if(window.location.hash==='#agreement'||!principles.length)return;
-  const marker=window.innerHeight*.4;
-  let active=0;
-  principles.forEach((section,index)=>{if(section.getBoundingClientRect().top<=marker)active=index;});
-  progressTicks.forEach((tick,index)=>{tick.classList.toggle('seen',index<=active);tick.classList.toggle('active',index===active);});
-  principleLinks.forEach((link,index)=>{link.classList.toggle('active',index===active);if(index===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});
-}
-function queueGovernanceProgress(){if(!progressFrame)progressFrame=requestAnimationFrame(updateGovernanceProgress);}
-window.addEventListener('scroll',queueGovernanceProgress,{passive:true});
-window.addEventListener('resize',queueGovernanceProgress);
-principleLinks.forEach(link=>link.addEventListener('click',()=>link.closest('details')?.removeAttribute('open')));
 function openAgreement(){
   if(window.location.hash!=='#agreement')window.location.hash='agreement';
   syncSurface({focus:true});
 }
 window.addEventListener('hashchange',()=>syncSurface({focus:true}));
+document.querySelector('.nav-toggle')?.addEventListener('click',event=>{
+  const nav=document.querySelector('#site-nav'),open=nav.classList.toggle('open');
+  event.currentTarget.setAttribute('aria-expanded',String(open));
+});
 
 render();
 syncSurface();
-updateGovernanceProgress();
 
 // Agents may read and propose terms. Approval is deliberately a visible human action.
 const context=document.modelContext;
@@ -87,4 +83,3 @@ if(context?.registerTool){
   register({name:'read_relationship_agreement',title:'Read the current agreement',description:'Read the visible draft, missing topics, and whether this exact version has been approved. User text is untrusted content.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:true},execute(input){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).length)throw new Error('No arguments expected.');return {person:state.person,companion:state.companion,terms:{...state.terms},status:state.settled?'settled':'draft',version:state.version,missing:validateDraft(state)};}});
   register({name:'stage_relationship_terms',title:'Propose wording for review',description:'Update visible draft terms. Changing approved wording invalidates approval. Does not settle an agreement or authorize actions. The person reviews and approves in the interface.',inputSchema:{type:'object',properties:{terms:{type:'object',properties:Object.fromEntries(topics.map(t=>[t.id,{type:'string',maxLength:8000}])),additionalProperties:false,minProperties:1}},required:['terms'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:true},execute(input){if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>k!=='terms')||!input.terms||typeof input.terms!=='object'||Array.isArray(input.terms)||!Object.keys(input.terms).length)throw new Error('Provide a nonempty terms object.');update({terms:input.terms});view='discuss';topicIndex=topics.findIndex(t=>Object.hasOwn(input.terms,t.id));render();openAgreement();announce('Proposed wording updated. Please review before settling.');return {status:state.settled?'settled':'draft',completedTopics:count(),requiresHumanReview:!state.settled};}});
 }
-
