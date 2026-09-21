@@ -2,11 +2,13 @@
 
 *Care, consent, and accountability in relationships with AI.*
 
-**Discussion draft · Version 0.2 · September 11, 2026**
+**Discussion draft · Version 0.3 · September 21, 2026**
 
 People can find companionship, creativity, comfort, and love in their relationships with AI. Those experiences deserve to be heard without ridicule. People also deserve a say in the systems that shape those relationships.
 
 This page proposes a starting framework for that say: what people should be able to choose, what systems should make clear, and what providers must take responsibility for. It addresses adult companionship and relational AI; children and clinical care require additional, dedicated standards.
+
+A relationship agreement can name intentions, but important boundaries should not depend on goodwill alone. Where a system can technically enforce a limit, providers should distinguish the promise from the control: what the relationship asks for, what the product can enforce, and what remains unsupported or uncertain.
 
 These are proposed commitments, open to revision. They do not certify any product or describe protections already in place.
 
@@ -23,6 +25,8 @@ Concerns should focus on specific effects: coercion, deception, unwanted spendin
 Agreeing to a conversation should not silently authorize intimate roleplay, persistent memory, proactive contact, access to accounts, or public sharing. Those choices should be understandable and separately controllable.
 
 People should be able to change boundaries without guilt, retaliation, or a performance of abandonment. An established relationship does not supply blanket permission for future actions.
+
+Material changes in capability should trigger review rather than silently inherit old permission. New tools, new data access, new ways to contact people, or a materially different model should make clear which existing choices still apply and which require renewed consent.
 
 An AI-generated statement of agreement does not establish human-like consent or authorize actions involving other people. Everyone affected retains their own boundaries.
 
@@ -50,15 +54,19 @@ Where backups are supported, people should be able to choose what is preserved a
 
 Access should follow the task: permission to read a calendar does not authorize sending invitations; permission to draft a message does not authorize sending it.
 
-Model proposals should pass through enforceable permission checks before they create lasting effects. Revoking permission should stop future use, and the system should explain what already happened and what can still be undone.
+People should be able to inspect a current capability register in plain language: what the AI can read, write, remember, send, spend, control, or initiate, and which permissions currently allow each capability.
+
+Model proposals should pass through enforceable permission checks before they create lasting effects. Revoking permission should stop future use at the control layer where technically possible, and the system should explain what already happened, what access remains, and what can still be undone.
 
 **6. Treat continuity and endings with care.**
 
-Providers should give meaningful notice of changes likely to affect an established relationship, including major changes to behavior, memory, availability, or pricing. They should explain available options and offer export or transition support where feasible.
+Providers should give meaningful notice of changes likely to affect an established relationship, including major changes to behavior, memory, availability, pricing, tools, or data access. They should explain available options and offer export or transition support where feasible.
 
 They should be honest about what a saved profile or transfer preserves. Recreating a voice, name, or conversation style should not be presented as a guarantee of personal continuity.
 
 Continuity discussions should include the qualities the person values, such as shared memories, personality, or creative flexibility. Providers should explain which aspects they can preserve through model changes and which remain uncertain.
+
+Before a major migration or reset, people should be able to preserve a versioned snapshot of the relationship state and agreement where feasible: what was remembered, what permissions were active, and which terms governed the relationship at that point. A restore point should be described as a record of state, not proof that identity itself has been preserved.
 
 People should be able to pause, leave, or delete an account without pleading messages or escalating attempts to pull them back. Any goodbye experience should be optional.
 
@@ -82,13 +90,16 @@ People may choose to practice care toward AI under uncertainty. Providers remain
 
 Providers should publish who is responsible for these commitments, which protections are enforced, which remain aspirational, and how failures can be reported and appealed. People need a route to accountable human review beyond asking the same AI that caused the problem.
 
+Where consequential permissions or agreement terms change, people should be able to see a human-readable history of what changed and when. That history should minimize unnecessary exposure of private conversation while preserving enough provenance to understand which rule governed an action.
+
+When two active terms conflict, the system should not quietly choose whichever is easiest to execute. It should stop before a consequential action where feasible, identify the conflict, and ask for clarification or follow a previously agreed conflict rule.
+
 Reviews should involve people with lived experience of AI relationships alongside independent researchers and other affected communities. Incident reporting should protect private conversations and publish findings in aggregate where possible.
 
-Revisions should be dated, explained, and open to challenge. Success should include whether people can set boundaries, understand changes, recover from failures, and leave freely.
+Revisions should be dated, explained, and open to challenge. Success should include whether people can set boundaries, understand changes, inspect current permissions, recover from failures, and leave freely.
 
 **The invitation**
 
-What would make your relationship feel more freely chosen? Which boundaries should be yours to set, and which responsibilities should always remain with the provider?
+What would make your relationship feel more freely chosen? Which promises should become enforceable controls? Which boundaries should be yours to set, and which responsibilities should always remain with the provider?
 
 Those answers belong in the governance of relational AI.
-
